@@ -18,6 +18,7 @@ import dataclasses
 import functools
 from typing import Any, Callable, List, Optional, Tuple
 
+import t5
 import seqio
 from t5.data import glue_utils
 from t5.data import postprocessors as t5_post
@@ -32,11 +33,19 @@ from flan import preprocessors
 from flan import templates
 from flan import utils
 
+import os
+
 ShotConfig = few_shot.ShotConfig
 
 # This is a placeholder, for the paper we used an internal vocabulary and model.
-VOCAB_FILE = 'gs://t5-data/vocabs/mc4.250000.100extra/sentencepiece.model'
-FLAN_VOCABULARY = seqio.SentencePieceVocabulary(VOCAB_FILE)
+# VOCAB_FILE = 'gs://t5-data/vocabs/mc4.250000.100extra/sentencepiece.model'
+# FLAN_VOCABULARY = seqio.SentencePieceVocabulary(VOCAB_FILE)
+
+# default t5 vocab
+FLAN_VOCABULARY = t5.data.get_default_vocabulary()
+
+BASE_DIR = "gs://t5-finetune-purn3ndu" #@param { type: "string" }
+DATA_DIR = os.path.join(BASE_DIR, "data")
 
 FLAN_OUTPUT_FEATURES = {
     'inputs':
@@ -778,6 +787,7 @@ def _process_squad_v2(example):
 TASK_CONFIGS['squad_v2'] = _TaskConfig(
     source=seqio.TfdsDataSource(
         tfds_name='squad/v2.0:3.0.0',
+        tfds_data_dir=DATA_DIR,
         splits={
             'train': f'train[:{NUM_TRAIN_EXAMPLES}]',
             'validation': f'train[-{NUM_VAL_EXAMPLES}:]',
@@ -1082,6 +1092,7 @@ def _process_imdb_reviews(example):
 TASK_CONFIGS['imdb_reviews'] = _TaskConfig(
     source=seqio.TfdsDataSource(
         tfds_name='imdb_reviews/plain_text:1.0.0',
+        tfds_data_dir=DATA_DIR,
         splits={
             'train': f'train[:-{NUM_VAL_EXAMPLES}]',
             'validation': f'train[-{NUM_VAL_EXAMPLES}:]',

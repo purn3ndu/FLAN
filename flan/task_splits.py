@@ -39,100 +39,110 @@ _TASKS_PER_CLUSTER_LIST = [1, 2, 3, 4]
 
 # Define task clusters using abbreviated task names. These abbreviated names
 # correspond to keys in templates.py:PATTERNS
+# _DEFAULT_TASK_CLUSTERS_ABBREV = collections.OrderedDict([
+#     ('summarization', [
+#         'aeslc',
+#         'cnn_dailymail',
+#         'gigaword',
+#         'multi_news',
+#         'newsroom',
+#         'samsum',
+#         'xsum',
+#         'ag_news_subset',
+#         'opinion_abstracts_rotten_tomatoes',
+#         'opinion_abstracts_idebate',
+#         'wiki_lingua_english_en',
+#     ]), ('structure_to_text', [
+#         'web_nlg_en',
+#         'common_gen',
+#         'e2e_nlg',
+#         'dart',
+#     ]),
+#     ('reading_comprehension', [
+#         'squad_v1',
+#         'squad_v2',
+#         'drop',
+#         'multirc',
+#         'openbookqa',
+#         'bool_q',
+#     ]),
+#     ('open_domain_qa', [
+#         'trivia_qa',
+#         'natural_questions',
+#         'arc_challenge',
+#         'arc_easy',
+#     ]), ('paraphrase', [
+#         'glue_mrpc',
+#         'glue_qqp',
+#         'paws_wiki',
+#         'stsb',
+#     ]),
+#     ('sentiment', [
+#         'imdb_reviews',
+#         'sentiment140',
+#         'yelp_polarity_reviews',
+#         'sst2',
+#     ]), ('text_formatting', [
+#         'true_case',
+#         'fix_punct',
+#         'word_segment',
+#     ]), ('common_sense', [
+#         'copa',
+#         'hellaswag',
+#         'story_cloze',
+#         'piqa',
+#     ]),
+#     ('translation', [
+#         'para_crawl_enes',
+#         'wmt14_enfr',
+#         'wmt16_translate_deen',
+#         'wmt16_translate_tren',
+#         'wmt16_translate_csen',
+#         'wmt16_translate_fien',
+#         'wmt16_translate_roen',
+#         'wmt16_translate_ruen',
+#     ]), ('coreference', [
+#         'definite_pronoun_resolution',
+#         'winogrande',
+#         'wsc',
+#     ]),
+#     ('entailment', [
+#         'anli_r1',
+#         'anli_r2',
+#         'anli_r3',
+#         'cb',
+#         'rte',
+#         'mnli_matched',
+#         'mnli_mismatched',
+#         'qnli',
+#         'wnli',
+#         'snli',
+#     ]), ('math', [
+#         'math_dataset',
+#     ]), ('conversational_qa', [
+#         'quac',
+#         'coqa',
+#     ]), ('word_disambiguation', [
+#         'wic',
+#     ]), ('linguistic_acceptability', [
+#         'cola',
+#     ]), ('question_classification', [
+#         'trec',
+#     ]), ('read_comp_and_common_sense', [
+#         'record',
+#         'cosmos_qa',
+#     ])
+# ])
+
 _DEFAULT_TASK_CLUSTERS_ABBREV = collections.OrderedDict([
-    ('summarization', [
-        'aeslc',
-        'cnn_dailymail',
-        'gigaword',
-        'multi_news',
-        'newsroom',
-        'samsum',
-        'xsum',
-        'ag_news_subset',
-        'opinion_abstracts_rotten_tomatoes',
-        'opinion_abstracts_idebate',
-        'wiki_lingua_english_en',
-    ]), ('structure_to_text', [
-        'web_nlg_en',
-        'common_gen',
-        'e2e_nlg',
-        'dart',
-    ]),
     ('reading_comprehension', [
-        'squad_v1',
         'squad_v2',
-        'drop',
-        'multirc',
-        'openbookqa',
-        'bool_q',
-    ]),
-    ('open_domain_qa', [
-        'trivia_qa',
-        'natural_questions',
-        'arc_challenge',
-        'arc_easy',
-    ]), ('paraphrase', [
-        'glue_mrpc',
-        'glue_qqp',
-        'paws_wiki',
-        'stsb',
     ]),
     ('sentiment', [
         'imdb_reviews',
-        'sentiment140',
-        'yelp_polarity_reviews',
-        'sst2',
-    ]), ('text_formatting', [
-        'true_case',
-        'fix_punct',
-        'word_segment',
-    ]), ('common_sense', [
-        'copa',
-        'hellaswag',
-        'story_cloze',
-        'piqa',
     ]),
-    ('translation', [
-        'para_crawl_enes',
-        'wmt14_enfr',
-        'wmt16_translate_deen',
-        'wmt16_translate_tren',
-        'wmt16_translate_csen',
-        'wmt16_translate_fien',
-        'wmt16_translate_roen',
-        'wmt16_translate_ruen',
-    ]), ('coreference', [
-        'definite_pronoun_resolution',
-        'winogrande',
-        'wsc',
-    ]),
-    ('entailment', [
-        'anli_r1',
-        'anli_r2',
-        'anli_r3',
-        'cb',
-        'rte',
-        'mnli_matched',
-        'mnli_mismatched',
-        'qnli',
-        'wnli',
-        'snli',
-    ]), ('math', [
-        'math_dataset',
-    ]), ('conversational_qa', [
-        'quac',
-        'coqa',
-    ]), ('word_disambiguation', [
-        'wic',
-    ]), ('linguistic_acceptability', [
-        'cola',
-    ]), ('question_classification', [
-        'trec',
-    ]), ('read_comp_and_common_sense', [
-        'record',
-        'cosmos_qa',
-    ])
 ])
+
 
 _SUPERGLUE_TASKS = frozenset(
     {'bool_q', 'cb', 'copa', 'multirc', 'record', 'rte', 'wic', 'wsc'})
@@ -613,12 +623,16 @@ def generate_inter_cluster_splits(
   """Generates inter-cluster splits of tasks."""
   if not task_clusters:
     task_clusters = _get_default_task_clusters(num_templates, shot_config)
+    print(task_clusters)
 
   task_splits = []
   for test_cluster_idx, (test_cluster_name,
                          test_tasks) in enumerate(task_clusters.items()):
     train_tasks = set()
     for cluster_name, cluster_tasks in task_clusters.items():
+      print("\nPrinting cluster names and tasks:\n")
+      print(cluster_name)
+      print(cluster_tasks)
       if test_cluster_name == cluster_name:
         continue
 
